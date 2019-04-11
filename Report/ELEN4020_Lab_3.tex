@@ -1,4 +1,4 @@
-\documentclass[12pt,twocolumn]{IEEEtran}
+\documentclass[12pt,onecolumn]{IEEEtran}
 \usepackage{ifpdf}
 \usepackage{graphicx}
 \usepackage{cite}
@@ -7,6 +7,7 @@
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{epstopdf}
+\usepackage{algorithm2e}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -74,18 +75,51 @@
 	
 	
 	\clearpage
-	%\onecolumn
 	\appendices
 	\renewcommand\thefigure{\thesection.\arabic{figure}} 
 	\renewcommand\theequation{\thesection.\arabic{equation}} 
 	\renewcommand\thetable{\thesection.\arabic{table}}
 	\renewcommand\thelstlisting{\thesection.\arabic{lstlisting}}
 	
-	\section{Pseudocode}
+	\section{Pseudocode for Word Count}
 	\setcounter{figure}{0}  
 	\setcounter{equation}{0} 
 	\setcounter{table}{0}
 
-
+	\begin{algorithm}[H]
+		\SetAlgoLined
+		\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+		\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+		\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+		\Input{Section of text in each bin.}
+		\Output{Text separated into single words.}
+		\ForEach{character in input}{Change character to lower-case;\\}
+		\While{iterator is not at end of input}{
+			\While{iterator is not at end of input \& character is not aphabetic}{
+				Increase iterator;\\
+			}
+			Set beginning of word to iterator;\\
+			\While{interator is not at end of input \& (character is alphabetic or apostrophe)}{
+				Increase iterator;\\
+			}
+			\If{iterator is not beginning of word}{Output word;}
+		}
+	\caption{Map function of the word count program.}
+	\end{algorithm}
+\vspace{5mm}
+	\begin{algorithm}[H]
+		\SetAlgoLined
+		\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+		\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+		\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+		\Input{All input text data.}
+		\Output{Text data separated into bins.}
+		\If{there is no more data to separate}{exit;\\}
+		\While{iterator is less than the chunk size \& not the end of the file}{increase iterator;\\}
+		Output chunk to bin;\\
+		\vspace{2mm}
+		\caption{Split function for the word count program.}	
+	\end{algorithm}
+\vspace{5mm}
 	
 \end{document}
