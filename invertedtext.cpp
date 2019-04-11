@@ -11,10 +11,11 @@
 #include <stdlib.h>
 #include<fstream>
 #include<string>
-
-#define DEFAULT_DISP_NUM 10
+#include <chrono>
+#include <ctime>
 
 using namespace std;
+using namespace std::chrono;
 
 struct wcChunk{
     char* first;
@@ -44,24 +45,20 @@ struct wcHash{
         return v;
     }
 };
-
+//Inherit MapReduceSort class from mapReduce Set combiner to buffer type
 class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, hash_container<wcKey, uint64_t, buffer_combiner, wcHash>>{
     
     char* data;
     uint64_t dataSize;
     uint64_t splitPos;
-    uint64_t chunkSize;
     uint64_t line_num;
-    string stop_words;
     public:
 
-    explicit WordCounter(char* inputData, uint64_t dataLength, uint64_t chunkSize, string stop_words) :
+    explicit WordCounter(char* inputData, uint64_t dataLength) :
         data(inputData),
         dataSize(dataLength),
-        chunkSize(chunkSize),
         splitPos(0),
-        line_num(0),
-        stop_words(stop_words){}
+        line_num(0){}
     
     void* locate(data_type* str, uint64_t length) const{
         return str->first;
@@ -72,6 +69,7 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
             s.first[i] = tolower(s.first[i]);
         }
         auto i =0;
+        //Getting words out of line obtained from split function
         while(i < s.length){
             while(i < s.length && (s.first[i] < 'a' || s.first[i] > 'z')){
                 i++;
@@ -80,9 +78,7 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
             while(i < s.length && ((s.first[i] >= 'a' && s.first[i] <= 'z') || s.first[i] == '\'')){
                 i++;
             }
-            
-            //string word(s.first, i);
-
+            //Emmiting the obtained word and line number for hashing
             if(i > start){
                 s.first[i]=0;
                 wcKey newWord = {s.first+start};
@@ -90,7 +86,8 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
             }
         }
     }
-
+    //Split function which is used to split the input file data 
+    //into lines of data. Split on line breaks and update line number
     int split(wcChunk& out){
         if((uint64_t)splitPos >= dataSize){
             return 0;
@@ -113,6 +110,7 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
 };
 
 int main(){
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
     char * fileName = "Dracula.txt";
     struct stat finfo;
     int fd;
@@ -124,9 +122,9 @@ int main(){
     stopWordsFile.open("Stop_Words.txt");
     string stop_words;
 
-    while(!stopWordsFile.eof()){
-        getline(stopWordsFile, stop_words);
-    }
+    //Populating string with all the stop words
+    getline(stopWordsFile, stop_words);
+    
     
     uint64_t r = 0;
     while(r < (uint64_t)finfo.st_size){
@@ -134,12 +132,21 @@ int main(){
     }
     cout << "starting map reduce" << endl;
     vector<WordCounter::keyval> result;
-    WordCounter mapReduce(data, finfo.st_size, 56, stop_words);
+    WordCounter mapReduce(data, finfo.st_size);
+
+    high_resolution_clock::time_point t3 = high_resolution_clock::now();
+
     mapReduce.run(result);
+    
+    high_resolution_clock::time_point t4 = high_resolution_clock::now();
+
+    duration<double> time_span1 = duration_cast<duration<double>>(t4 - t3);
+
     cout<<"Results matrix size: "<<result.size()<<endl;
     cout << "completed map reduce" << endl;
     auto printed = 0;
     auto x = 0;
+    //Printing out the results vector while ignoring the stop words
     while(printed < 50){
         if(stop_words.find(result[x].key.first) == std::string::npos){
             printf("%15s - %lu\n", result[x].key.first, result[x].val);
@@ -148,5 +155,11 @@ int main(){
         x++;
     }
     cout << "completed map reduce" << endl;
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration<double> time_span2 = duration_cast<duration<double>>(t2 - t1);
+
+    std::cout << "The map reduction took: " << time_span1.count() << " seconds to run."<<endl;
+    std::cout << "The entire program took: " << time_span2.count() << " seconds to run."<<endl;
     free(data);
 }
