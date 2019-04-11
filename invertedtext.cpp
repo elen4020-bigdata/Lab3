@@ -148,4 +148,5 @@ int main(){
         x++;
     }
     cout << "completed map reduce" << endl;
+    free(data);
 }
