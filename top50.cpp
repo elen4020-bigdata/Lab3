@@ -103,7 +103,7 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
     }
 
     bool sort(keyval const& a, keyval const& b) const{
-        return a.val < b.val || (a.val == b.val && strcmp(a.key.first, b.key.first) > 0);
+        return a.val > b.val || (a.val == b.val && strcmp(a.key.first, b.key.first) > 0);
     }
 };
 
@@ -132,7 +132,7 @@ int main(){
     mapReduce.run(result);
     auto print = 0;
     auto index = 0;
-    while(print < result.size()){
+    while(print < 50{
         auto isStop = false;
         for(auto x = 0; x < stopWords.size(); x++){
             if(stopWords.at(x) == string(result[index].key.first)){
