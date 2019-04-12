@@ -34,7 +34,7 @@
 # CodeLite IDE
 *.mk
 *.project
-*.txt
+#*.txt
 .codelite/
 *.workspace
 Makefile
