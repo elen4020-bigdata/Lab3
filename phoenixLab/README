@@ -1,0 +1,39 @@
+Data Intensive Computing in Data Science - Lab 3
+Nicholas Kastanos - 1393410
+Brendon Swanepoel - 601949
+Anita de Mello Koch - 1371116
+
+-----------------------------------------------------------------------------
+Compile the Code
+-----------------------------------------------------------------------------
+
+To compile the code run the make command in the top directory:
+
+    make
+
+-----------------------------------------------------------------------------
+Run word count programme
+-----------------------------------------------------------------------------
+
+To run the word count programme, the path to the text file, relative to the top directory, 
+must be specified. For example, to run the word count programme with the Dracula.txt:
+
+./wordCount/wordCount Dracula.txt
+
+-----------------------------------------------------------------------------
+Run top k programme
+----------------------------------------------------------------------------
+
+The top k programme requires the path to the text file, relative to the top directory, 
+and the number of words to print. To run the top k programme for Dracula.txt and print 50 words:
+
+./top50/top50 Dracula.txt 50
+
+------------------------------------------------------------------------------
+Run inverted index programme
+------------------------------------------------------------------------------
+
+The inverted index programme requires the path to the text file, relative to the top directory.
+To run the inverted index programme with the Dracula.txt:
+
+./invert/invertedtext Dracula.txt
