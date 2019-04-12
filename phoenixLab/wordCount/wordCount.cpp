@@ -148,7 +148,7 @@ int main(int argc, char *argv[]){
     auto printed = 0;
     auto x = 0;
     //Printing out the results vector while ignoring the stop words
-    while(printed < result.size()){
+    while(x < result.size()){
         if(stop_words.find(result[x].key.first) == std::string::npos){
             printf("%15s - %lu\n", result[x].key.first, result[x].val);
             printed++;
