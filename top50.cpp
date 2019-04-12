@@ -108,41 +108,56 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
 };
 
 int main(){
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
     char * fileName = "Dracula.txt";
-    ifstream stopFile;
-    stopFile.open("stopwords.txt");
-    string temp;
-    vector<string> stopWords;
-    while(getline(stopFile, temp)){
-        int length = temp.size();
-        stopWords.push_back(temp.substr(0, length - 1));
-    }
     struct stat finfo;
     int fd;
     fd = open(fileName, O_RDONLY);
     fstat(fd, &finfo);
     char * data = (char *)malloc (finfo.st_size);
 
+    ifstream stopWordsFile;
+    stopWordsFile.open("Stop_Words.txt");
+    string stop_words;
+
+    //Populating string with all the stop words
+    getline(stopWordsFile, stop_words);
+    
+    
     uint64_t r = 0;
     while(r < (uint64_t)finfo.st_size){
         r += pread(fd, data + r, finfo.st_size,r);
     }
+    cout << "starting map reduce" << endl;
     vector<WordCounter::keyval> result;
-    WordCounter mapReduce(data, finfo.st_size, 1024);
+    WordCounter mapReduce(data, finfo.st_size);
+
+    high_resolution_clock::time_point t3 = high_resolution_clock::now();
+
     mapReduce.run(result);
-    auto print = 0;
-    auto index = 0;
-    while(print < 50{
-        auto isStop = false;
-        for(auto x = 0; x < stopWords.size(); x++){
-            if(stopWords.at(x) == string(result[index].key.first)){
-                isStop = true;
-            }
+    
+    high_resolution_clock::time_point t4 = high_resolution_clock::now();
+
+    duration<double> time_span1 = duration_cast<duration<double>>(t4 - t3);
+
+    cout<<"Results matrix size: "<<result.size()<<endl;
+    cout << "completed map reduce" << endl;
+    auto printed = 0;
+    auto x = 0;
+    //Printing out the results vector while ignoring the stop words
+    while(printed < 50){
+        if(stop_words.find(result[x].key.first) == std::string::npos){
+            printf("%15s - %lu\n", result[x].key.first, result[x].val);
+            printed++;
         }
-        if(!isStop){
-            printf("%15s - %lu\n", result[index].key.first, result[index].val);
-            print++;
-        }
-        index++;
+        x++;
     }
+    cout << "completed map reduce" << endl;
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration<double> time_span2 = duration_cast<duration<double>>(t2 - t1);
+
+    std::cout << "The map reduction took: " << time_span1.count() << " seconds to run."<<endl;
+    std::cout << "The entire program took: " << time_span2.count() << " seconds to run."<<endl;
+    free(data);
 }
