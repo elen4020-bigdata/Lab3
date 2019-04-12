@@ -9,10 +9,13 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
+#include <ctime>
 
 #define DEFAULT_DISP_NUM 10
 
 using namespace std;
+using namespace std::chrono;
 //struct that will hold the data that is sent to each bin
 struct wcChunk{
     char* first;
@@ -107,9 +110,9 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
     }
 };
 
-int main(){
+int main(int argc, char *argv[]){
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
-    char * fileName = "Dracula.txt";
+    char * fileName = argv[1];
     struct stat finfo;
     int fd;
     fd = open(fileName, O_RDONLY);
