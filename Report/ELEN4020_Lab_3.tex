@@ -44,12 +44,12 @@
 
 \ifpdf
 \pdfinfo{
-	/Title (The Modelling of a Linear DC Motor to be Used in Space)
-	/Author (Nicholas Kastanos (1393410))
-	/CreationDate (D:201902211949)
-	/ModDate (D:201902211949)
-	/Subject (Software 2 Report, Modelling)
-	/Keywords (modelling, linear DC motor, control)
+	/Title (Laboratory Work 3: MapReduce with Phoenix++)
+	/Author (Anita de Mello Koch (1371116), Nicholas Kastanos (1393410), Brendon Swanepoel (601949))
+	/CreationDate (D:201914121726)
+	/ModDate (D:201914121726)
+	/Subject (Big Data Lab, MapReduce)
+	/Keywords (MapReduce, c++, pheonix++)
 }
 \fi
 
@@ -64,15 +64,40 @@
 	
 	\section{Introduction}
 	
+	Phoenix is a MapReduce framework for shared memory systems implemented using C, and reimplemented in Phoenix++ for C++. It uses an inheritance-based model, which when the \verb|split()|, \verb|map()|, and \verb|reduce()| functions are overwritten, can implement MapReduce functionality.
+	
+	Three different algorithms were implemented using Phoenix++: a word-count algorithm which counts the words in the input text; a Top-K algorithm which outputs the top K elements of the word-count; and a reverse index of words in the text. These algorithms were run on two text inputs, and a list of stopwords is supplied to exclude them from the operations.
+	
+	\section{Results}
+	
+	A long and short set of data were used to run the algorithms. \textit{Dracula} by Bram Stoker is used as the short text, as it is $820~KB$ in size. 
+	%% Add details for long text here
+	The running times of the algorithms can be seen in Table~\ref{tbl:time}.
+	
+	\begin{table}[h]
+		\centering \caption{Running Times} \label{tbl:time}
+		\begin{tabular}{lll}
+			\hline
+			Algorithm     & Small Data & Large Data \\ \hline
+			Word Count    &            &            \\
+			Top-K         &            &            \\
+			Reverse Index &            &            \\ \hline
+		\end{tabular}
+	\end{table}
 
+	\section{Algorithm Data Types}
 	
-	\section{}
+	In order to count the number of appearances of a single word, the word-count and top-K algorithms use a key-pair which uses the word as a key, and the number of appearances as the value. By specifying that the \verb|WordCounter| class inherits from the \verb|MapReduceSort| class using a \verb|sum_combiner|, the MapReduce operation sums the values for each unique key during combination, and sorts the list. The mapping function used for these algorithms can be seen in Algorithm~\ref{alg:mapWord}.
 	
+	The inverted indexing algorithm makes use of different key-value pairs. The word is used as the key, and the line number which the word appeared is used as the key. The inverted indexing algorithm also inherits from the \verb|MapReduceSort| class, but makes use of a \verb|buffer_combiner| to list all of the unique values of line number for each key. The mapping function used for these algorithms can be seen in Algorithm~\ref{alg:mapIndex}.
 	
+	The split function used in all of the algorithms can be seen in Algorithm~\ref{alg:split}.
 	
 	\section{Conclusion}
 	
+	Phoenix++ is can successfully solve MapReduce problems, and has a simple method of utilising the framework. By making use of C++, one is able to manage the memory more closely and increase the performance of the code.
 	
+	Phoenix++ was sucessfully used to solve the three MapReduce problems, on both small and larger input data.
 	
 	\clearpage
 	\appendices
@@ -92,19 +117,19 @@
 		\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
 		\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
 		\Input{Section of text in each bin.}
-		\Output{Text separated into single words.}
+		\Output{Text separated into single words and count of appearance.}
 		\ForEach{character in input}{Change character to lower-case;\\}
-		\While{iterator is not at end of input}{
-			\While{iterator is not at end of input \& character is not aphabetic}{
+		\While{not at end of input}{
+			\While{not at end of input \& character is not aphabetic}{
 				Increase iterator;\\
 			}
 			Set beginning of word to iterator;\\
-			\While{interator is not at end of input \& (character is alphabetic or apostrophe)}{
+			\While{not at end of input \& (character is alphabetic or apostrophe)}{
 				Increase iterator;\\
 			}
-			\If{iterator is not beginning of word}{Output word;}
+			\If{not beginning of word}{Output word and count 1;}
 		}
-	\caption{Map function of the word count program.}
+	\caption{Map function of the word count and top-K programs.} \label{alg:mapWord}
 	\end{algorithm}
 \vspace{5mm}
 	\begin{algorithm}[H]
@@ -112,14 +137,65 @@
 		\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
 		\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
 		\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-		\Input{All input text data.}
-		\Output{Text data separated into bins.}
-		\If{there is no more data to separate}{exit;\\}
-		\While{iterator is less than the chunk size \& not the end of the file}{increase iterator;\\}
-		Output chunk to bin;\\
-		\vspace{2mm}
-		\caption{Split function for the word count program.}	
+		\Input{Section of text in each bin.}
+		\Output{Text separated into single words and line number.}
+		\ForEach{character in input}{Change character to lower-case;\\}
+		\While{not at end of input}{
+			\While{not at end of input \& character is not aphabetic}{
+				Increase iterator;\\
+			}
+			Set beginning of word to iterator;\\
+			\While{not at end of input \& (character is alphabetic or apostrophe)}{
+				Increase iterator;\\
+			}
+			\If{not beginning of word}{Output word and line number;}
+		}
+		\caption{Map function of the reverse index program.} \label{alg:mapIndex}
 	\end{algorithm}
 \vspace{5mm}
+	\begin{algorithm}[H]
+		\SetAlgoLined
+		\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+		\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+		\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+		\Input{Chunk which receives the data.}
+		\Output{success or failure to allocate data to chunk}
+		\If{at end of data}{return 0;\\}
+		\While{iterator is less than the chunk size \& not the end of the file}{increase iterator;\\}
+		return 1;\\
+		\vspace{2mm}
+		\caption{Split function for the Phoenix++ programs.}	\label{alg:split}
+	\end{algorithm}
+
+	\section{Stopwords}
+	\setcounter{figure}{0}  
+	\setcounter{equation}{0} 
+	\setcounter{table}{0}
+	
+	\begin{tabular}{|lllllllll|}
+		\hline
+		a       & below    & from    & how      & most      & over      & them       & we      & won't      \\
+		about   & between  & further & how's    & mustn't   & own       & themselves & we'd    & why        \\
+		above   & both     & had     & i        & my        & same      & then       & we'll   & why's      \\
+		after   & but      & hadn't  & i'd      & myself    & shan't    & there      & we're   & would      \\
+		again   & by       & has     & i'll     & needn't   & she       & there's    & we've   & wouldn't   \\
+		against & can      & hasn't  & i'm      & no        & she'd     & these      & were    & you        \\
+		ain't   & can't    & have    & i've     & nor       & she'll    & they       & weren't & you'd      \\
+		all     & could    & haven't & if       & not       & she's     & they'd     & what    & you'll     \\
+		am      & couldn't & having  & in       & now       & should    & they're    & what's  & you're     \\
+		an      & did      & he      & into     & of        & should've & they've    & when    & you've     \\
+		and     & didn't   & he'd    & is       & off       & shouldn't & this       & when's  & your       \\
+		any     & do       & he'll   & isn't    & on        & so        & those      & where   & yours      \\
+		are     & does     & he's    & it       & once      & some      & through    & where's & yourself   \\
+		aren't  & doesn't  & her     & it's     & only      & such      & to         & which   & yourselves \\
+		as      & doing    & here    & its      & or        & than      & too        & while   &            \\
+		at      & don't    & here's  & itself   & other     & that      & under      & who     &            \\
+		be      & down     & hers    & just     & ought     & that'll   & until      & who's   &            \\
+		because & during   & herself & let's    & our       & that's    & up         & whom    &            \\
+		been    & each     & him     & me       & ours      & the       & very       & why     &            \\
+		before  & few      & himself & mightn't & ourselves & their     & was        & will    &            \\
+		being   & for      & his     & more     & out       & theirs    & wasn't     & with    &            \\ \hline
+	\end{tabular} 
+	
 	
 \end{document}
