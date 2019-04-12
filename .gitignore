@@ -36,7 +36,6 @@
 #*.txt
 .codelite/
 *.workspace
-Makefile
 
 ### macOS ###
 *.DS_Store
