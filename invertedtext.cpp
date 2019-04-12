@@ -105,7 +105,7 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
     }
 
     bool sort(keyval const& a, keyval const& b) const{
-        return a.val < b.val || (a.val == b.val && strcmp(a.key.first, b.key.first) > 0);
+        return a.key.first < b.key.first || (a.key.first == b.key.first && strcmp(a.key.first, b.key.first) > 0);
     }
 };
 
@@ -146,11 +146,23 @@ int main(){
     cout << "completed map reduce" << endl;
     auto printed = 0;
     auto x = 0;
+    auto firstTime = true;
     //Printing out the results vector while ignoring the stop words
     while(printed < 50){
         if(stop_words.find(result[x].key.first) == std::string::npos){
-            printf("%15s - %lu\n", result[x].key.first, result[x].val);
-            printed++;
+            if(result[x].key.first == result[x-1].key.first && !firstTime){
+                if(result[x].val != result[x-1].val)
+                    cout<<", "<<result[x].val;
+            }
+            else if(firstTime){
+                printf("%15s - %lu", result[x].key.first, result[x].val);
+                firstTime = false;
+            }
+            else{
+                printf("\n");
+                firstTime = true;
+                printed++;
+            }
         }
         x++;
     }
