@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{epstopdf}
 \usepackage{algorithm2e}
+\usepackage{hyperref}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
@@ -56,7 +57,7 @@
 \begin{document}
 	\title{Laboratory Work 3: MapReduce with Phoenix++}
 	
-	\author{\IEEEauthorblockN{Anita de Mello Koch (1371116)\\Nicholas Kastanos (1393410)\\Brendon Swanepoel (601949)}\\
+	\author{\IEEEauthorblockN{Anita de Mello Koch (1371116), Nicholas Kastanos (1393410), \\Brendon Swanepoel (601949)}\\
 		\IEEEauthorblockA{School of Electrical \& Information Engineering, University of the Witwatersrand, Private Bag 3, 2050, Johannesburg, South Africa\\ELEN4020 Data Intensive Computing in Data Science\\15 April 2019}}
 	
 	\maketitle
@@ -70,18 +71,19 @@
 	
 	\section{Results}
 	
-	A long and short set of data were used to run the algorithms. \textit{Dracula} by Bram Stoker is used as the short text, as it is $820~KB$ in size. 
-	%% Add details for long text here
-	The running times of the algorithms can be seen in Table~\ref{tbl:time}.
+	A long and short set of data were used to run the algorithms. \textit{Dracula} by Bram Stoker is used as the short text, as it is $820~KB$ in size. The large file of data is a compilation of texts (which can be downloaded from the \href{https://github.com/kozyraki/phoenix}{Phoenix Github page}), and in $100~MB$ in size.
+	
+	The running times of the MapReduce section of each algorithm can be seen in Table~\ref{tbl:time}.
 	
 	\begin{table}[h]
-		\centering \caption{Running Times} \label{tbl:time}
+		\centering \caption{Running Times in Seconds} \label{tbl:time}
 		\begin{tabular}{lll}
 			\hline
 			Algorithm     & Small Data & Large Data \\ \hline
-			Word Count    &            &            \\
-			Top-K         &            &            \\
-			Reverse Index &            &            \\ \hline
+			Word Count    & 0.0091722  & 0.553257   \\
+			Top-10        & 0.0092126  & 0.549055   \\
+			Top-20        & 0.0122066  & 0.535806   \\
+			Reverse Index & 0.0686829  & 3.60311    \\ \hline
 		\end{tabular}
 	\end{table}
 
