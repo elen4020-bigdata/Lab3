@@ -109,9 +109,9 @@ class WordCounter : public MapReduceSort<WordCounter, wcChunk, wcKey, uint64_t, 
     }
 };
 
-int main(){
+int main(int argc, char *argv[]){
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
-    char * fileName = "Dracula.txt";
+    char * fileName = argv[1];
     struct stat finfo;
     int fd;
     fd = open(fileName, O_RDONLY);
@@ -148,7 +148,7 @@ int main(){
     auto x = 0;
     auto firstTime = true;
     //Printing out the results vector while ignoring the stop words
-    while(printed < 50){
+    while(x < result.size()){
         if(stop_words.find(result[x].key.first) == std::string::npos){
             if(result[x].key.first == result[x-1].key.first && !firstTime){
                 if(result[x].val != result[x-1].val)
