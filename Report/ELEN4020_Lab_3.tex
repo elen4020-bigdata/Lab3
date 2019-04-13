@@ -67,23 +67,23 @@
 	
 	Phoenix is a MapReduce framework for shared memory systems implemented using C, and reimplemented in Phoenix++ for C++. It uses an inheritance-based model, which when the \verb|split()|, \verb|map()|, and \verb|reduce()| functions are overwritten, can implement MapReduce functionality.
 	
-	Three different algorithms were implemented using Phoenix++: a word-count algorithm which counts the words in the input text; a Top-K algorithm which outputs the top K elements of the word-count; and a reverse index of words in the text. These algorithms were run on two text inputs, and a list of stopwords is supplied to exclude them from the operations.
+	Three different algorithms were implemented using Phoenix++: a word-count algorithm which counts the words in the input text; a Top-K algorithm which outputs the top K elements of the word-count; and a reverse index of words in the text. These algorithms were run on three text inputs, and a list of stopwords is supplied to exclude them from the operations.
 	
 	\section{Results}
 	
-	A long and short set of data were used to run the algorithms. \textit{Dracula} by Bram Stoker is used as the short text, as it is $820~KB$ in size. The large file of data is a compilation of texts (which can be downloaded from the \href{https://github.com/kozyraki/phoenix}{Phoenix Github page}), and is $100~MB$ in size.
+	A long, medium, and short set of data were used to run the algorithms. \textit{Dracula} by Bram Stoker is used as the short text, as it is $820~KB$ in size. The medium-sized file is \textit{File2ForLab3.txt}, which was supplied for use in these algorithms, and is $1.31~MB$ in size.  The large file of data is a compilation of texts (which can be downloaded from the \href{https://github.com/kozyraki/phoenix}{Phoenix Github page}), and is $100~MB$ in size.
 	
 	The running times of the MapReduce section of each algorithm can be seen in Table~\ref{tbl:time}.
 	
 	\begin{table}[h]
 		\centering \caption{Running Times in Seconds} \label{tbl:time}
-		\begin{tabular}{lll}
+		\begin{tabular}{llll}
 			\hline
-			Algorithm     & Small Data & Large Data \\ \hline
-			Word Count    & 0.0091722  & 0.553257   \\
-			Top-10        & 0.0092126  & 0.549055   \\
-			Top-20        & 0.0122066  & 0.535806   \\
-			Reverse Index & 0.0686829  & 3.60311    \\ \hline
+			Algorithm     & Small Data & Medium Data & Large Data \\ \hline
+			Word Count    & 0.0091722  & 0.0113149   & 0.553257   \\
+			Top-10        & 0.0092126  & 0.0110157   & 0.549055   \\
+			Top-20        & 0.0122066  & 0.0132727   & 0.535806   \\
+			Reverse Index & 0.0686829  & 0.0630872   & 3.60311    \\ \hline
 		\end{tabular}
 	\end{table}
 
@@ -99,7 +99,7 @@
 	
 	Phoenix++ is can successfully solve MapReduce problems, and has a simple method of utilising the framework. By making use of C++, one is able to manage the memory more closely and increase the performance of the code.
 	
-	Phoenix++ was sucessfully used to solve the three MapReduce problems, on both small and larger input data.
+	Phoenix++ was sucessfully used to solve the three MapReduce problems, on small, medium, and larger input data.
 	
 	\clearpage
 	\appendices
